@@ -19,3 +19,32 @@ sleep <- read_csv("http://vincentarelbundock.github.io/Rdatasets/csv/lme4/sleeps
 head(sleep)
 
 ```
+
+plot the data by subject
+```{r}
+library(ggplot2)
+ggplot(sleep, aes(x = Days, y = Reaction)) +
+  geom_point() +
+  geom_smooth() +
+  scale_x_continuous(breaks = seq(0, 8, by = 2)) +
+  facet_wrap(~ Subject)
+```
+
+summary statistics by subject
+```{r}
+library(dplyr)
+sleep %>%
+  group_by(Subject) %>%
+  summarise(mean(Reaction))
+```
+
+mean center reaction times and plot on a single axis
+```{r}
+sleep %>%
+  group_by(Subject) %>%
+  mutate(mean_center_reaction = Reaction - mean(Reaction)) %>%
+  ggplot(aes(x = Days, y = mean_center_reaction,
+             colour = factor(Subject))) +
+  geom_smooth(show.legend = F, se = F) +
+  scale_x_continuous(breaks = seq(0, 8, by = 2))
+```
